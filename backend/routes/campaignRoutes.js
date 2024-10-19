@@ -1,24 +1,11 @@
 const express = require('express');
-const Campaign = require('../models/Campaign');
+const { createCampaign, getCampaignById, getAllCampaigns, donateToCampaign } = require('../controllers/campaignController');
 const router = express.Router();
-const auth = require('../middleware/auth'); // Middleware for protected routes
 
-// Create a new campaign
-router.post('/', auth, async (req, res) => {
-  const { title, description, targetAmount, deadline } = req.body;
-  const campaign = new Campaign({
-    title, description, targetAmount, deadline,
-    user: req.user,
-  });
-  await campaign.save();
-  res.json(campaign);
-});
-
-// List all campaigns
-router.get('/', async (req, res) => {
-  const campaigns = await Campaign.find();
-  res.json(campaigns);
-});
+router.post('/', createCampaign);  // POST request for creating campaigns
+router.get('/', getAllCampaigns);  // GET request to fetch all campaigns
+router.get('/:id', getCampaignById);  // GET request for a single campaign by ID
+router.post('/:id/donate', donateToCampaign);  // POST request to donate to a campaign
 
 module.exports = router;
 

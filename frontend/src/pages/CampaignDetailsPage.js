@@ -1,47 +1,55 @@
 import React, { useEffect, useState } from 'react';
-import './CampaignDetailsPage.css'; // Create this CSS file to add styling
-import { getCampaignDetails, donateToCampaign } from '../api';
+import { getCampaignDetails, donateToCampaign } from '../api'; // Import necessary functions
 
 const CampaignDetailsPage = ({ match }) => {
   const [campaign, setCampaign] = useState(null);
-  const [donationAmount, setDonationAmount] = useState(0);
+  const [error, setError] = useState('');
+  const [donationAmount, setDonationAmount] = useState('');
+
+  const campaignId = match.params.id; // Assuming you're using React Router
 
   useEffect(() => {
-    const fetchCampaignDetails = async () => {
-      const data = await getCampaignDetails(match.params.id);
-      setCampaign(data);
+    const loadCampaignDetails = async () => {
+      try {
+        const response = await getCampaignDetails(campaignId);
+        setCampaign(response);
+      } catch (err) {
+        setError('Failed to load campaign details');
+        console.error('Error fetching campaign:', err);
+      }
     };
-    fetchCampaignDetails();
-  }, [match.params.id]);
+
+    loadCampaignDetails();
+  }, [campaignId]);
 
   const handleDonate = async () => {
-    await donateToCampaign(campaign._id, donationAmount);
-    // Handle donation success
+    try {
+      await donateToCampaign(campaignId, donationAmount);
+      alert('Donation successful');
+    } catch (err) {
+      setError('Failed to donate');
+      console.error('Donation error:', err);
+    }
   };
 
-  return (
-    <div className="campaign-details-container">
-      {campaign ? (
-        <>
-          <h2 className="campaign-title">{campaign.title}</h2>
-          <p className="campaign-description">{campaign.description}</p>
-          <h3 className="campaign-goal">Goal: ${campaign.goal}</h3>
-          <h3 className="campaign-raised">Raised: ${campaign.raised}</h3>
+  if (!campaign) return <div>Loading...</div>;
 
-          <input
-            type="number"
-            value={donationAmount}
-            onChange={(e) => setDonationAmount(e.target.value)}
-            className="donation-input"
-            placeholder="Enter donation amount"
-          />
-          <button className="donate-button" onClick={handleDonate}>
-            Donate
-          </button>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
+  return (
+    <div>
+      <h1>{campaign.title}</h1>
+      <p>{campaign.description}</p>
+      <p>Goal: ${campaign.goal}</p>
+      <p>Raised: ${campaign.raised}</p>
+
+      <input 
+        type="number" 
+        placeholder="Donation amount" 
+        value={donationAmount} 
+        onChange={(e) => setDonationAmount(e.target.value)} 
+      />
+      <button onClick={handleDonate}>Donate</button>
+
+      {error && <p>{error}</p>}
     </div>
   );
 };

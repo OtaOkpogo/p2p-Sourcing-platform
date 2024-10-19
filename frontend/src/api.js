@@ -1,20 +1,48 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api'; // adjust to your backend API URL
+const API_URL = 'http://localhost:5000/api/campaigns';
 
+// Create a new campaign
+export const createCampaign = async (campaignData) => {
+  try {
+    const response = await axios.post(API_URL, campaignData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating campaign:', error);
+    throw error.response?.data?.message || 'Error creating campaign';
+  }
+};
+
+// Fetch all campaigns
 export const fetchCampaigns = async () => {
-  return await axios.get(`${API_URL}/campaigns`);
+  try {
+    const response = await axios.get(API_URL);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching campaigns:', error);
+    throw error.response?.data?.message || 'Error fetching campaigns';
+  }
 };
 
+// Fetch a single campaign by ID
 export const fetchCampaignById = async (id) => {
-  return await axios.get(`${API_URL}/campaigns/${id}`);
+  try {
+    const response = await axios.get(`${API_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching campaign:', error);
+    throw error.response?.data?.message || 'Error fetching campaign';
+  }
 };
 
-export const createCampaign = async (campaignData, token) => {
-  return await axios.post(`${API_URL}/campaigns`, campaignData, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// Donate to a campaign
+export const donateToCampaign = async (id, amount) => {
+  try {
+    const response = await axios.post(`${API_URL}/${id}/donate`, { amount });
+    return response.data;
+  } catch (error) {
+    console.error('Error donating to campaign:', error);
+    throw error.response?.data?.message || 'Error donating to campaign';
+  }
 };
-
-// Add other necessary API functions for login, registration, donations, etc.
 

@@ -1,21 +1,53 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import './LoginPage.css'; // Add CSS file to style this page
+import { login } from '../api';
 
-const LoginPage = () => {
+const LoginPage = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = async () => {
-    const res = await axios.post('/api/auth/login', { email, password });
-    localStorage.setItem('token', res.data.token); // Store token
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login({ email, password });
+      history.push('/dashboard'); // Redirect to dashboard after login
+    } catch (err) {
+      setError('Invalid email or password');
+    }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleLogin}>Login</button>
+    <div className="login-page-container">
+      <div className="login-box">
+        <h2 className="login-title">Login</h2>
+        {error && <p className="login-error">{error}</p>}
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+          <button type="submit" className="login-button">Login</button>
+        </form>
+      </div>
     </div>
   );
 };

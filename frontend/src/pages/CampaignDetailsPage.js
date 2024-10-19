@@ -1,32 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchCampaignById } from '../api';
-import { Link } from 'react-router-dom';
+import './CampaignDetailsPage.css'; // Create this CSS file to add styling
+import { getCampaignDetails, donateToCampaign } from '../api';
 
-const CampaignDetailsPage = () => {
-  const { id } = useParams();
+const CampaignDetailsPage = ({ match }) => {
   const [campaign, setCampaign] = useState(null);
+  const [donationAmount, setDonationAmount] = useState(0);
 
   useEffect(() => {
-    const loadCampaign = async () => {
-      const response = await fetchCampaignById(id);
-      setCampaign(response.data);
+    const fetchCampaignDetails = async () => {
+      const data = await getCampaignDetails(match.params.id);
+      setCampaign(data);
     };
+    fetchCampaignDetails();
+  }, [match.params.id]);
 
-    loadCampaign();
-  }, [id]);
-
-  if (!campaign) {
-    return <div>Loading...</div>;
-  }
+  const handleDonate = async () => {
+    await donateToCampaign(campaign._id, donationAmount);
+    // Handle donation success
+  };
 
   return (
-    <div>
-      <h1>{campaign.title}</h1>
-      <p>{campaign.description}</p>
-      <Link to={`/donate/${campaign._id}`}>
-        <button>Donate</button>
-      </Link>
+    <div className="campaign-details-container">
+      {campaign ? (
+        <>
+          <h2 className="campaign-title">{campaign.title}</h2>
+          <p className="campaign-description">{campaign.description}</p>
+          <h3 className="campaign-goal">Goal: ${campaign.goal}</h3>
+          <h3 className="campaign-raised">Raised: ${campaign.raised}</h3>
+
+          <input
+            type="number"
+            value={donationAmount}
+            onChange={(e) => setDonationAmount(e.target.value)}
+            className="donation-input"
+            placeholder="Enter donation amount"
+          />
+          <button className="donate-button" onClick={handleDonate}>
+            Donate
+          </button>
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };

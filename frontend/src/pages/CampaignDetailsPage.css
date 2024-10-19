@@ -1,0 +1,55 @@
+/* Container styling */
+.campaign-details-container {
+  background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+  height: 100vh;
+  padding: 50px;
+  text-align: center;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.campaign-title {
+  color: #fff;
+  font-size: 3rem;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.campaign-description, .campaign-goal, .campaign-raised {
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.donation-input {
+  padding: 10px;
+  width: 100%;
+  max-width: 300px;
+  margin: 20px 0;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.donate-button {
+  background-color: #66a6ff;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.donate-button:hover {
+  background-color: #89f7fe;
+  transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+

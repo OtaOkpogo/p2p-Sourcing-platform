@@ -1,37 +1,45 @@
 import React, { useState } from 'react';
 import { createCampaign } from '../api';
-import { useNavigate } from 'react-router-dom';
 
 const CreateCampaignPage = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ title: '', description: '', goal: '' });
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token'); // Assuming you're using token-based authentication
-    const campaignData = { title, description };
-    await createCampaign(campaignData, token);
-    navigate('/campaigns'); // Redirect to campaigns page after creation
+    try {
+      await createCampaign(formData);
+      alert('Campaign created successfully');
+    } catch (err) {
+      setError(err);
+    }
   };
 
   return (
     <div>
-      <h1>Create a New Campaign</h1>
+      <h2>Create Campaign</h2>
       <form onSubmit={handleSubmit}>
-        <label>Title</label>
         <input
           type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          value={formData.title}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
-        <label>Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+        <input
+          type="text"
+          placeholder="Description"
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
         />
-        <button type="submit">Create Campaign</button>
+        <input
+          type="number"
+          placeholder="Goal"
+          value={formData.goal}
+          onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+        />
+        <button type="submit">Create</button>
       </form>
+      {error && <p>Error creating campaign: {error}</p>}
     </div>
   );
 };

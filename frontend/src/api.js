@@ -69,3 +69,8 @@ export const login = async (userData) => {
   }
 };
 
+// User logout
+export const logout = () => {
+  localStorage.removeItem('token');
+};
+

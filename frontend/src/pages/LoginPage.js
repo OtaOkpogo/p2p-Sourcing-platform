@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
-import { login } from '../api'; // Import the login function
+import { login } from '../api';  // Import the login function
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     try {
       const userData = { email, password };
-      const response = await login(userData);
-      // Handle login success: store token or redirect
+      const response = await login(userData);  // Call the login function
+
+      // Store the token and redirect on successful login
       console.log('Login successful:', response);
-      // e.g., redirect to dashboard
+      window.location.href = '/dashboard';  // Redirect to the dashboard
+
     } catch (err) {
-      setError('Failed to login');
+      setError(err.message || 'Failed to login');  // Display error message
       console.error('Login error:', err);
     }
   };
@@ -25,21 +27,21 @@ const LoginPage = () => {
     <div>
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-        <input 
-          type="email" 
-          placeholder="Email" 
+        <input
+          type="email"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input 
-          type="password" 
-          placeholder="Password" 
+        <input
+          type="password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        {error && <p>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}  {/* Display error */}
         <button type="submit">Login</button>
       </form>
     </div>
